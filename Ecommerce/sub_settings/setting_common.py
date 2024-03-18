@@ -22,6 +22,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     "rest_framework_simplejwt.token_blacklist",
     "drf_yasg",
+
+    # All app services
+    "applications.authentication"
 ]
 
 """
@@ -106,7 +109,7 @@ USE_I18N = True
 USE_TZ = True
 
 # Custom user model referenced inside setting
-# AUTH_USER_MODEL = "authentication.CustomUser"
+AUTH_USER_MODEL = "authentication.CustomUser"
 
 
 # Static files (CSS, JavaScript, Images)
@@ -118,7 +121,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Media url to store file or images or even document, etc,....
 MEDIA_URL = '/media/'
-MEDIA_ROOT = [os.path.join(BASE_DIR, 'media')]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
