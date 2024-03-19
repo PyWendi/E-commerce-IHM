@@ -50,4 +50,3 @@ class ProductViewSet(viewsets.ModelViewSet):
         type_id = self.request.data.get("type")
         type_product = TypeProduct.objects.get(pk=type_id)
         serializer.save(type=type_product)
-
