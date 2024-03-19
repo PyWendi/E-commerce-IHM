@@ -8,21 +8,21 @@ class TypeProductSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["id", "designation"]
 
 
-class ProductSerializer(serializers.HyperlinkedModelSerializer):
-    type = serializers.PrimaryKeyRelatedField(many=False, read_only=False)
+class ProductSerializer(serializers.ModelSerializer):
+    # type = serializers.PrimaryKeyRelatedField()
 
     class Meta:
         model = Product
-        fields = ["url", "id", "description", "price", "expiration_date", "type"]
+        fields = ["id", "name", "description", "price", "expiration_date", "type"]
 
 
 class TypeAndProductSerialiser(serializers.HyperlinkedModelSerializer):
     # snippets = serializers.HyperlinkedRelatedField(many=True, view_name='snippet-detail', read_only=True)
     # snippets = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     # snippets = SnippetSerializer(many=True)
-    products = ProductSerializer(many=True)
+    products = ProductSerializer(source="product_set", many=True)
 
     class Meta:
         model = TypeProduct
-        fields = ["id", "designation", "product"]
+        fields = ["id", "designation", "products"]
 

@@ -3,21 +3,34 @@ from django.http import Http404
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 
+# handle rest views
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view, action
 
+# handle token behavior
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serialisers import CustomTokenObtainPairSerialiser
+
+# Handle swagger
 from drf_yasg.utils import swagger_auto_schema
 
 from .serialisers import ProfileImageSerializer, FileUploadSerializer, UserSerializer
 from .models import UploadedFile
 
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """
+    Customise the token which will return within the api
+    """
+    serializer_class = CustomTokenObtainPairSerialiser
+    # def get_token_for_user(selfuser):
+
 class UserViewSet(viewsets.ModelViewSet):
     """
-    This API provide most action for performing CRUD operation on the client model
+    This API provide most action for performing CRUD operation on the `client` model
     This ViewSet automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     Additionally, we also provide an extra `update_profile` action.

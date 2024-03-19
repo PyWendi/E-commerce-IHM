@@ -58,9 +58,3 @@ class FileUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = UploadedFile
         fields = ('file',)
-
-# class UserSerializer(serializers.ModelSerializer):
-#     snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
-#     class Meta:
-#         model = User
-#         fields = ["id", "username", "snippets"]
