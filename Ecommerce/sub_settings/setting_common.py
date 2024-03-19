@@ -24,7 +24,8 @@ INSTALLED_APPS = [
     "drf_yasg",
 
     # All app services
-    "applications.authentication"
+    "applications.authentication",
+    "applications.product",
 ]
 
 """
