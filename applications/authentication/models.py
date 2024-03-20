@@ -4,9 +4,6 @@ from .manager import CustomUserManager
 
 
 def upload_to(instance, filename):
-    print("\n \n inside upload_to function")
-    print(instance.profile_img)
-    print(filename)
     return 'profile_images/' + filename
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):

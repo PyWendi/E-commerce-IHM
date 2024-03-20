@@ -11,7 +11,7 @@ class CustomTokenObtainPairSerialiser(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token["isAdmin"] = user.is_staff
+        token["isAdmin"] = user.is_superuser
         return token
 
     # def validate(self, attrs):
