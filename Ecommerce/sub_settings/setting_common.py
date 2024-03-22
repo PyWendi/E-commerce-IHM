@@ -10,7 +10,7 @@ SECRET_KEY = env.get("SECRET_KEY")
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # print(env.get("DEBUG_MODE"))
 print("\n \n INSIDE SETTINGS \n \n")
-print(SECRET_KEY)
+print(env)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150"]
 
