@@ -28,7 +28,7 @@ for item in items:
 my_variable = os.getenv('SECRET_KEY')
 print(f"SECRET_KEY: {my_variable}")
 
-print(env)
+
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150"]
 
