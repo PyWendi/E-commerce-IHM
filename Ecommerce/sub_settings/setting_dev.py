@@ -1,9 +1,7 @@
 from .setting_common import *
 import os
-from dotenv import dotenv_values
 from datetime import timedelta
 
-env = dotenv_values("../../.env")
 
 DATABASES = {
     'default': {

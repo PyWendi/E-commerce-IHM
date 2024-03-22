@@ -11,7 +11,7 @@ channels[daphne]
 djangorestframework-simplejwt
 Pillow #For file management
 python-dotenv
-drf-flex-fields
+#drf-flex-fields
 django-cors-headers
 dj-database-url
 whitenoise[brotli]

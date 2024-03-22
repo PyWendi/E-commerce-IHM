@@ -1,12 +1,6 @@
 from .setting_common import *
 from datetime import timedelta
 import os
-from dotenv import dotenv_values
-
-env = dotenv_values("../../.env")
-
-# print("\n \n")
-# print(env)
 
 DATABASES = {
     # 'default': {
@@ -19,7 +13,7 @@ DATABASES = {
     # }
     'default': dj_database_url.config(
             # Replace this value with your local database's connection string.
-            default=env.get("DATABASE_URL"),
+            default=os.getenv("DATABASE_URL"),
             conn_max_age=600
         )
 }

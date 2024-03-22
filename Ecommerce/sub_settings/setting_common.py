@@ -1,33 +1,14 @@
 from pathlib import Path
-from dotenv import dotenv_values, load_dotenv
+from dotenv import load_dotenv
 import os
 import dj_database_url
 
-env = dotenv_values("../../.env")
-
-
-SECRET_KEY = env.get("SECRET_KEY")
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-# print(env.get("DEBUG_MODE"))
-print("\n \n INSIDE SETTINGS \n \n")
-# Determine the directory containing settings.py
-# Determine the root directory
-root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 
-# Load the .env file located in the root directory
-load_dotenv(dotenv_path=os.path.join(root_dir, '.env'))
+ENV_FILE_PATH = BASE_DIR / ".env"
+load_dotenv(str(ENV_FILE_PATH))
 
-# List all items in the root directory
-items = os.listdir(root_dir)
-
-# Print the list of items
-for item in items:
-    print(item)
-
-my_variable = os.getenv('SECRET_KEY')
-print(f"SECRET_KEY: {my_variable}")
-
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150"]
@@ -87,7 +68,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-if env.get("DEBUG_MODE") != "True":
+if os.getenv("DEBUG_MODE") != "True":
     list1.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
 
@@ -152,7 +133,7 @@ AUTH_USER_MODEL = "authentication.CustomUser"
 STATIC_URL = '/static/'
 STATIC_ROOT = ""
 STATICFILES_STORAGE = ""
-if env.get("DEBUG_MODE") == "True":
+if os.getenv("DEBUG_MODE") == "True":
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 else:
