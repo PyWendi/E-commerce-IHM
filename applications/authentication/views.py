@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
 from django.http import FileResponse
+from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 
 # handle rest views
@@ -42,10 +43,17 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete']]
 
+
+    # async def get_queryset(self) -> QuerySet:
+    #     return await get_user_model().objects.all()
+
+
     def get_permissions(self):
         if self.action in ["create"]:
+        # request_method = self.request.method.lower()
+        # if request_method == 'post':
             self.permission_classes = []
-        else :
+        else:
             self.permission_classes = [IsAuthenticated]
         return super(UserViewSet, self).get_permissions()
 
@@ -53,22 +61,25 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         Instantiates and returns the list of authentication classes that this view requires.
         """
-        if self.action == 'create':
+        # if self.action == 'create':
+        #     return []
+        request_method = self.request.method.lower()
+        if request_method == 'post':
             return []
         else:
             return [JWTAuthentication()]
         return super(UserViewSet, self).get_authenticators()
 
     @action(methods=["put"], detail=True, parser_classes=[MultiPartParser, FormParser], serializer_class=ProfileImageSerializer)
-    def update_profile(self, request, pk):
+    async def update_profile(self, request, pk):
         # print(request.FILES)
-        user = get_object_or_404(get_user_model(), pk=pk)
+        user = await get_object_or_404(get_user_model(), pk=pk)
         profile_img = request.FILES.get("profile_img") if request.FILES.get("profile_img") else None
         data = {"profile_img": profile_img}
 
         serializer = self.serializer_class(user, data=data)
         if serializer.is_valid():
-            serializer.save()
+            await serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -78,18 +89,18 @@ class FileUploadAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = FileUploadSerializer
 
-    def post(self, request, *args, **kwargs):
+    async def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            await serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["GET"])
-def download_file(request, pk):
+async def download_file(request, pk):
     # Retrieve the UploadedFile instance by its primary key (pk)
     # uploaded_file = get_object_or_404(UploadedFile, pk=pk)
-    user = get_object_or_404(get_user_model(), pk=pk)
+    user = await get_object_or_404(get_user_model(), pk=pk)
     # Use FileResponse to serve the file
     # The as_attachment=True parameter prompts the browser to download the file
     # return FileResponse(uploaded_file.file.open(), as_attachment=True)
@@ -109,20 +120,19 @@ class ProfileUpdateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(request_body=ProfileImageSerializer, responses={200: "Updated", 400: "Not updated"})
-    def put(self, request, pk, *args, **kwargs):
-        print(request.FILES)
-        user = get_user_model().objects.get(pk=pk)
+    async def put(self, request, pk, *args, **kwargs):
+        user = await get_user_model().objects.get(pk=pk)
         profile_img = request.FILES.get("profile_img") if request.FILES.get("profile_img") else None
         data = {"profile_img": profile_img}
         serializer = ProfileImageSerializer(user, data=data)
         if serializer.is_valid():
-            serializer.save()
+            await serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(responses={200: "OK"})
-    def get(self, request, pk, format=None):
-        user = get_object(pk)
+    async def get(self, request, pk, format=None):
+        user = await get_object(pk)
         serializer = ProfileImageSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -131,9 +141,9 @@ class ProfileSetView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     @swagger_auto_schema(request_body=ProfileImageSerializer, responses={201: "CREATED", 400: "Not updated"})
-    def post(self, request, *args, **kwargs):
+    async def post(self, request, *args, **kwargs):
         serializer = ProfileImageSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            await serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

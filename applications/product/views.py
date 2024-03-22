@@ -1,6 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
 from django.shortcuts import get_object_or_404
-from django.db.models import Avg
+from django.db.models import Avg, QuerySet
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.views import APIView
@@ -30,6 +30,10 @@ class TypeProductViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['patch']]
 
+
+    # async def get_queryset(self) -> QuerySet:
+    #     return await TypeProduct.objects.all()
+
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
@@ -45,8 +49,8 @@ class TypeProductViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(responses={200: TypeAndProductSerialiser(many=True), 400: "Not updated"})
     @action(methods=["GET"], detail=True)
-    def all_products(self, request, pk=None):
-        type = get_object_or_404(TypeProduct, pk=pk)
+    async def all_products(self, request, pk=None):
+        type = await get_object_or_404(TypeProduct, pk=pk)
         serializer = TypeAndProductSerialiser(type)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -63,6 +67,10 @@ class ProductViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete']]
 
+
+    # async def get_queryset(self) -> QuerySet:
+    #     return await Product.objects.order_by("-name")
+
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
@@ -72,13 +80,13 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         if self.action in ["create", "update", "delete", "update_image"]:
             self.permission_classes = [IsAuthenticated, IsAdminUser]
-        else :
+        else:
             self.permission_classes = [IsAuthenticated]
         return super(ProductViewSet, self).get_permissions()
 
-    def perform_create(self, serializer):
+    async def perform_create(self, serializer):
         type_id = self.request.data.get("type")
-        type_product = TypeProduct.objects.get(pk=type_id)
+        type_product = await TypeProduct.objects.get(pk=type_id)
         serializer.save(type=type_product)
 
     """-------Extra views--------"""
@@ -89,20 +97,20 @@ class ProductViewSet(viewsets.ModelViewSet):
         parser_classes=[MultiPartParser, FormParser],
         serializer_class=ProductImageUpdateSerialiser,
     )
-    def update_image(self, request, pk):
+    async def update_image(self, request, pk):
         """
         Add an extra method which alow to update the image of a specific product
         @param request:
         @param pk:
         @return file url:
         """
-        product = get_object_or_404(Product, pk=pk)
+        product = await get_object_or_404(Product, pk=pk)
         image = request.FILES.get("image") if request.FILES.get("image") else None
         data = {"image": image}
         serializer = self.serializer_class(product, data=data)
 
         if serializer.is_valid():
-            serializer.save()
+            await serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -113,7 +121,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         detail=True,
         serializer_class=RateSerialiser,
     )
-    def rate(self, request, pk):
+    async def rate(self, request, pk):
         """
         ```
         $ '[Set rating for a product]'
@@ -128,16 +136,16 @@ class ProductViewSet(viewsets.ModelViewSet):
         ```
         `RETURN THE AVERAGE FINALE RATE VALUE`
         """
-        product = get_object_or_404(Product, pk=pk)
+        product = await get_object_or_404(Product, pk=pk)
         rate_value = int(request.data["rate_value"] if request.data["rate_value"] else 0)
-        Rating.objects.update_or_create(
+        await Rating.objects.update_or_create(
             product=product.id,
             user_id=request.user.id,
             defaults={"product": product, "user_id": request.user.id, "rate_value": rate_value}
         )
 
         # We take the average value of rating for a product
-        rate = Rating.objects.filter(product=product).aggregate(average_rate=Avg("rate_value"))
+        rate = await Rating.objects.filter(product=product).aggregate(average_rate=Avg("rate_value"))
         product.rate = int(rate["average_rate"])
         product.save()
         return Response({"rate": product.rate}, status=status.HTTP_201_CREATED)

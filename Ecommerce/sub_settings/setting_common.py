@@ -58,6 +58,7 @@ SWAGGER_SETTINGS = {
 list1 = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 MIDDLEWARE = [
@@ -68,8 +69,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-if os.getenv("DEBUG_MODE") != "True":
-    list1.append('whitenoise.middleware.WhiteNoiseMiddleware')
+# if os.getenv("DEBUG_MODE") != "True":
+#     list1.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
 
 MIDDLEWARE = list1 + MIDDLEWARE
@@ -133,12 +134,12 @@ AUTH_USER_MODEL = "authentication.CustomUser"
 STATIC_URL = '/static/'
 STATIC_ROOT = ""
 STATICFILES_STORAGE = ""
-if os.getenv("DEBUG_MODE") == "True":
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-else:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# if os.getenv("DEBUG_MODE") == "True":
+#     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# else:
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
