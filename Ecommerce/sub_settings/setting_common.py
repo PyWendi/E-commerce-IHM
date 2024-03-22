@@ -5,9 +5,10 @@ import dj_database_url
 
 env = dotenv_values("../../.env")
 
+SECRET_KEY = env.get("SECRET_KEY")
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # print(env.get("DEBUG_MODE"))
-SECRET_KEY = env.get("SECRET_KEY")
 print("\n \n INSIDE SETTINGS \n \n")
 print(SECRET_KEY)
 
