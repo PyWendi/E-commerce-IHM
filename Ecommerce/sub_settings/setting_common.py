@@ -12,19 +12,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # print(env.get("DEBUG_MODE"))
 print("\n \n INSIDE SETTINGS \n \n")
 # Determine the directory containing settings.py
-settings_path = os.path.dirname(os.path.abspath(__file__))
+# Determine the root directory
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-# Get the parent directory of settings.py
-parent_dir = os.path.dirname(settings_path)
-
-# List all items in the parent directory
-items = os.listdir(parent_dir)
-
-# Filter out the settings.py file and any other files or directories you want to exclude
-filtered_items = [item for item in items if item != 'settings.py']
+# List all items in the root directory
+items = os.listdir(root_dir)
 
 # Print the list of items
-for item in filtered_items:
+for item in items:
     print(item)
 
 print(env)
