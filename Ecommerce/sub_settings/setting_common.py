@@ -25,8 +25,8 @@ items = os.listdir(root_dir)
 for item in items:
     print(item)
 
-my_variable = os.getenv('DEBUG_MODE')
-print(f"DEBUG_MODE: {my_variable}")
+my_variable = os.getenv('SECRET_KEY')
+print(f"SECRET_KEY: {my_variable}")
 
 print(env)
 
