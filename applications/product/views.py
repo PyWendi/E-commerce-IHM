@@ -30,10 +30,6 @@ class TypeProductViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['patch']]
 
-
-    # async def get_queryset(self) -> QuerySet:
-    #     return await TypeProduct.objects.all()
-
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
@@ -42,7 +38,7 @@ class TypeProductViewSet(viewsets.ModelViewSet):
         """
         if self.action in ["create", "update", "delete"]:
             self.permission_classes = [IsAuthenticated, IsAdminUser]
-        else :
+        else:
             self.permission_classes = [IsAuthenticated]
         return super(TypeProductViewSet, self).get_permissions()
 
@@ -67,17 +63,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete']]
 
-
-    # async def get_queryset(self) -> QuerySet:
-    #     return await Product.objects.order_by("-name")
-
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
         here, we only need specific permission for create and update method of the
         viewsets methods
         """
-
         if self.action in ["create", "update", "delete", "update_image"]:
             self.permission_classes = [IsAuthenticated, IsAdminUser]
         else:

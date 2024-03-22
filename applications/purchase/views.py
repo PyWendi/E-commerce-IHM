@@ -25,10 +25,6 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete', 'patch']]
 
-
-    # async def get_queryset(self) -> QuerySet:
-    #     return await Purchase.objects.all()
-
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
@@ -59,16 +55,12 @@ class OrderViewSets(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete', 'patch']]
 
-    # async def get_queryset(self) -> QuerySet:
-    #     return await Order.objects.all()
-
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
         here, we only need specific permission for create and update method of the
         viewsets methods
         """
-
         if self.action in ["update", "delete"]:
             self.permission_classes = [IsAuthenticated, IsAdminUser]
         else:

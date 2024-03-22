@@ -43,15 +43,8 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete']]
 
-
-    # async def get_queryset(self) -> QuerySet:
-    #     return await get_user_model().objects.all()
-
-
     def get_permissions(self):
         if self.action in ["create"]:
-        # request_method = self.request.method.lower()
-        # if request_method == 'post':
             self.permission_classes = []
         else:
             self.permission_classes = [IsAuthenticated]
@@ -61,8 +54,6 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         Instantiates and returns the list of authentication classes that this view requires.
         """
-        # if self.action == 'create':
-        #     return []
         request_method = self.request.method.lower()
         if request_method == 'post':
             return []
@@ -72,7 +63,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(methods=["put"], detail=True, parser_classes=[MultiPartParser, FormParser], serializer_class=ProfileImageSerializer)
     async def update_profile(self, request, pk):
-        # print(request.FILES)
         user = await get_object_or_404(get_user_model(), pk=pk)
         profile_img = request.FILES.get("profile_img") if request.FILES.get("profile_img") else None
         data = {"profile_img": profile_img}
