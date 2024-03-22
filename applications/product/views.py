@@ -27,6 +27,21 @@ class TypeProductViewSet(viewsets.ModelViewSet):
     """
     queryset = TypeProduct.objects.all()
     serializer_class = TypeProductSerializer
+    authentication_classes = [JWTAuthentication]
+    http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['patch']]
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        here, we only need specific permission for create and update method of the
+        viewsets methods
+        """
+        if self.action in ["create", "update", "delete"]:
+            self.permission_classes = [IsAuthenticated, IsAdminUser]
+        else :
+            self.permission_classes = [IsAuthenticated]
+        return super(TypeProductViewSet, self).get_permissions()
+
 
     @swagger_auto_schema(responses={200: TypeAndProductSerialiser(many=True), 400: "Not updated"})
     @action(methods=["GET"], detail=True)
@@ -45,12 +60,42 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     queryset = Product.objects.order_by("-name")
     serializer_class = ProductSerializer
+    authentication_classes = [JWTAuthentication]
+    http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete']]
 
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated, IsAdminUser]
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        here, we only need specific permission for create and update method of the
+        viewsets methods
+        """
 
-    @action(methods=["PUT"], detail=True, parser_classes=[MultiPartParser, FormParser], serializer_class=ProductImageUpdateSerialiser)
+        if self.action in ["create", "update", "delete", "update_image"]:
+            self.permission_classes = [IsAuthenticated, IsAdminUser]
+        else :
+            self.permission_classes = [IsAuthenticated]
+        return super(ProductViewSet, self).get_permissions()
+
+    def perform_create(self, serializer):
+        type_id = self.request.data.get("type")
+        type_product = TypeProduct.objects.get(pk=type_id)
+        serializer.save(type=type_product)
+
+    """-------Extra views--------"""
+
+    @action(
+        methods=["PUT"],
+        detail=True,
+        parser_classes=[MultiPartParser, FormParser],
+        serializer_class=ProductImageUpdateSerialiser,
+    )
     def update_image(self, request, pk):
+        """
+        Add an extra method which alow to update the image of a specific product
+        @param request:
+        @param pk:
+        @return file url:
+        """
         product = get_object_or_404(Product, pk=pk)
         image = request.FILES.get("image") if request.FILES.get("image") else None
         data = {"image": image}
@@ -61,8 +106,13 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
     @swagger_auto_schema(request_body=RateSerialiser, responses={201: "{'rate': rate_value}", 400: "Not updated"})
-    @action(methods=["POST"], detail=True, serializer_class=RateSerialiser)
+    @action(
+        methods=["POST"],
+        detail=True,
+        serializer_class=RateSerialiser,
+    )
     def rate(self, request, pk):
         """
         ```
@@ -92,7 +142,4 @@ class ProductViewSet(viewsets.ModelViewSet):
         product.save()
         return Response({"rate": product.rate}, status=status.HTTP_201_CREATED)
 
-    def perform_create(self, serializer):
-        type_id = self.request.data.get("type")
-        type_product = TypeProduct.objects.get(pk=type_id)
-        serializer.save(type=type_product)
+

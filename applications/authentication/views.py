@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 # handle rest views
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -12,6 +13,7 @@ from rest_framework.decorators import api_view, action
 
 # handle token behavior
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serialisers import CustomTokenObtainPairSerialiser
 
 # Handle swagger
@@ -26,7 +28,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     Customise the token which will return within the api
     """
     serializer_class = CustomTokenObtainPairSerialiser
-    # def get_token_for_user(selfuser):
+    # def get_token_for_user(self,user):
+    #     pass
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -37,6 +40,24 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
+    http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete']]
+
+    def get_permissions(self):
+        if self.action in ["create"]:
+            self.permission_classes = []
+        else :
+            self.permission_classes = [IsAuthenticated]
+        return super(UserViewSet, self).get_permissions()
+
+    def get_authenticators(self):
+        """
+        Instantiates and returns the list of authentication classes that this view requires.
+        """
+        if self.action == 'create':
+            return []
+        else:
+            return [JWTAuthentication()]
+        return super(UserViewSet, self).get_authenticators()
 
     @action(methods=["put"], detail=True, parser_classes=[MultiPartParser, FormParser], serializer_class=ProfileImageSerializer)
     def update_profile(self, request, pk):

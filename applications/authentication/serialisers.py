@@ -7,17 +7,14 @@ from .models import UploadedFile
 """
 Custom the content of the token generated
 """
+
+
 class CustomTokenObtainPairSerialiser(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
         token["isAdmin"] = user.is_superuser
         return token
-
-    # def validate(self, attrs):
-    #     data = super().validate(attrs)
-    #     data.update({'email': self.user.email})
-    #     return data
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -47,6 +44,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "solde",
             # 'snippets'
         ]
+
 
 class ProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
