@@ -8,6 +8,8 @@ env = dotenv_values(".env")
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # print(env.get("DEBUG_MODE"))
 SECRET_KEY = env.get("SECRET_KEY")
+print("\n \n INSIDE SETTINGS \n \n")
+print(SECRET_KEY)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150"]
 
