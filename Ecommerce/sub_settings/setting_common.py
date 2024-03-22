@@ -1,5 +1,5 @@
 from pathlib import Path
-from dotenv import dotenv_values
+from dotenv import dotenv_values, load_dotenv
 import os
 import dj_database_url
 
@@ -15,12 +15,18 @@ print("\n \n INSIDE SETTINGS \n \n")
 # Determine the root directory
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 
+# Load the .env file located in the root directory
+load_dotenv(dotenv_path=os.path.join(root_dir, '.env'))
+
 # List all items in the root directory
 items = os.listdir(root_dir)
 
 # Print the list of items
 for item in items:
     print(item)
+
+my_variable = os.getenv('DEBUG_MODE')
+print(f"DEBUG_MODE: {my_variable}")
 
 print(env)
 
