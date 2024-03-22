@@ -105,9 +105,29 @@ def get_object(pk):
     except user.DoesNotExist:
         raise Http404
 
+# class ProfileUpdateView(APIView):
+#     parser_classes = [MultiPartParser, FormParser]
+#
+#
+#
+#     @swagger_auto_schema(responses={200: "OK"})
+#     async def get(self, request, pk, format=None):
+#         user = await get_object(pk)
+#         serializer = ProfileImageSerializer(user)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#
 
-class ProfileUpdateView(APIView):
+class ProfileSetView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+
+
+    @swagger_auto_schema(request_body=ProfileImageSerializer, responses={201: "CREATED", 400: "Not updated"})
+    async def post(self, request, *args, **kwargs):
+        serializer = ProfileImageSerializer(data=request.data)
+        if serializer.is_valid():
+            await serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(request_body=ProfileImageSerializer, responses={200: "Updated", 400: "Not updated"})
     async def put(self, request, pk, *args, **kwargs):
@@ -115,24 +135,6 @@ class ProfileUpdateView(APIView):
         profile_img = request.FILES.get("profile_img") if request.FILES.get("profile_img") else None
         data = {"profile_img": profile_img}
         serializer = ProfileImageSerializer(user, data=data)
-        if serializer.is_valid():
-            await serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(responses={200: "OK"})
-    async def get(self, request, pk, format=None):
-        user = await get_object(pk)
-        serializer = ProfileImageSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class ProfileSetView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
-
-    @swagger_auto_schema(request_body=ProfileImageSerializer, responses={201: "CREATED", 400: "Not updated"})
-    async def post(self, request, *args, **kwargs):
-        serializer = ProfileImageSerializer(data=request.data)
         if serializer.is_valid():
             await serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
