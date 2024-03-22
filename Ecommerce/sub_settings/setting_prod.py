@@ -3,7 +3,7 @@ from datetime import timedelta
 import os
 from dotenv import dotenv_values
 
-env = dotenv_values(".env")
+env = dotenv_values("../../.env")
 
 # print("\n \n")
 # print(env)

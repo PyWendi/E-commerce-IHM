@@ -3,7 +3,7 @@ import os
 from dotenv import dotenv_values
 from datetime import timedelta
 
-env = dotenv_values(".env")
+env = dotenv_values("../../.env")
 
 DATABASES = {
     'default': {

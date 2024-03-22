@@ -2,7 +2,7 @@ from dotenv import dotenv_values
 import os
 
 
-env = dotenv_values(".env")
+env = dotenv_values("../.env")
 
 
 DEBUG = True if (env.get("DEBUG_MODE") == "True") else False

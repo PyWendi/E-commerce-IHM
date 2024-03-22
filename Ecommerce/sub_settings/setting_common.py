@@ -3,7 +3,7 @@ from dotenv import dotenv_values
 import os
 import dj_database_url
 
-env = dotenv_values(".env")
+env = dotenv_values("../../.env")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # print(env.get("DEBUG_MODE"))
