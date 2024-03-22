@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 print("\n \n INSIDE SETTINGS \n \n")
 # Determine the directory containing settings.py
 # Determine the root directory
-root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 
 # List all items in the root directory
 items = os.listdir(root_dir)
