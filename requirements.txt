@@ -1,0 +1,17 @@
+django
+drf_yasg
+djangorestframework
+#whitenoise
+gunicorn
+uvicorn
+psycopg2
+#django-rest-durin
+#django-cache-memoize
+channels[daphne]
+djangorestframework-simplejwt
+Pillow #For file management
+python-dotenv
+drf-flex-fields
+django-cors-headers
+dj-database-url
+whitenoise[brotli]

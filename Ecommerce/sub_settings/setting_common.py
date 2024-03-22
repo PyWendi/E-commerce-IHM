@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import dotenv_values
 import os
+import dj_database_url
 
 env = dotenv_values(".env")
 
@@ -52,9 +53,12 @@ SWAGGER_SETTINGS = {
     },
 }
 
-MIDDLEWARE = [
+list1 = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+]
+
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,6 +66,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+if env.get("DEBUG_MODE") != "True":
+    list1.append('whitenoise.middleware.WhiteNoiseMiddleware')
+
+
+MIDDLEWARE = list1 + MIDDLEWARE
 
 ROOT_URLCONF = 'Ecommerce.urls'
 
@@ -120,7 +129,15 @@ AUTH_USER_MODEL = "authentication.CustomUser"
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = ""
+STATICFILES_STORAGE = ""
+if env.get("DEBUG_MODE") == "True":
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # Media url to store file or images or even document, etc,....
