@@ -5,11 +5,28 @@ import dj_database_url
 
 env = dotenv_values("../../.env")
 
+
 SECRET_KEY = env.get("SECRET_KEY")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # print(env.get("DEBUG_MODE"))
 print("\n \n INSIDE SETTINGS \n \n")
+# Determine the directory containing settings.py
+settings_path = os.path.dirname(os.path.abspath(__file__))
+
+# Get the parent directory of settings.py
+parent_dir = os.path.dirname(settings_path)
+
+# List all items in the parent directory
+items = os.listdir(parent_dir)
+
+# Filter out the settings.py file and any other files or directories you want to exclude
+filtered_items = [item for item in items if item != 'settings.py']
+
+# Print the list of items
+for item in filtered_items:
+    print(item)
+
 print(env)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150"]
