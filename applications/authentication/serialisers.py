@@ -22,7 +22,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     # snippets = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     # snippets = SnippetSerializer(many=True)
 
-    profile_img = serializers.ImageField()
+    profile_img = serializers.ImageField(read_only=True)
     password = serializers.CharField(write_only=True)
     is_staff = serializers.BooleanField(write_only=True)
     is_superuser = serializers.BooleanField()
