@@ -24,8 +24,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     profile_img = serializers.ImageField(read_only=True)
     password = serializers.CharField(write_only=True)
+    is_active = serializers.BooleanField(write_only=True)
     is_staff = serializers.BooleanField(write_only=True)
-    is_superuser = serializers.BooleanField()
+    is_superuser = serializers.BooleanField(write_only=True)
 
     class Meta:
         model = get_user_model()
@@ -37,13 +38,18 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             "email",
             "password",
             "profile_img",
+            "is_active",
             "is_staff",
             "is_superuser",
             "birthdate",
             "card_number",
             "solde",
-            # 'snippets'
         ]
+
+    def create(self, validated_data):
+        user = get_user_model()
+        return user.objects.create_user(**validated_data)
+
 
 
 class ProfileImageSerializer(serializers.ModelSerializer):

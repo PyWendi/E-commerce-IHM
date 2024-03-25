@@ -3,6 +3,7 @@ from django.http import Http404
 from django.http import FileResponse
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.hashers import make_password
 
 # handle rest views
 from rest_framework.views import APIView
@@ -105,21 +106,10 @@ def get_object(pk):
     except user.DoesNotExist:
         raise Http404
 
-# class ProfileUpdateView(APIView):
-#     parser_classes = [MultiPartParser, FormParser]
-#
-#
-#
-#     @swagger_auto_schema(responses={200: "OK"})
-#     async def get(self, request, pk, format=None):
-#         user = await get_object(pk)
-#         serializer = ProfileImageSerializer(user)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-#
 
 class ProfileSetView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-
+    authentication_classes = [JWTAuthentication]
 
     @swagger_auto_schema(request_body=ProfileImageSerializer, responses={201: "CREATED", 400: "Not updated"})
     async def post(self, request, *args, **kwargs):
@@ -139,3 +129,10 @@ class ProfileSetView(APIView):
             await serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+def set_password(request, password):
+    return Response({
+        "password": make_password(password)
+    })

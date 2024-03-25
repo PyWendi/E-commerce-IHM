@@ -13,7 +13,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=128)
     profile_img = models.ImageField(upload_to=upload_to, blank=True)
     birthdate = models.DateField(null=True)
-    card_number = models.TextField(max_length=15, null=True, blank=True, unique=True)
+    card_number = models.CharField(max_length=15, null=True, blank=True, unique=True)
     solde = models.IntegerField(default=5000, blank=True)
     # is_admin = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True, editable=True)
