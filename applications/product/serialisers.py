@@ -13,7 +13,7 @@ class ProductSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(allow_empty_file=False, allow_null=True)
     class Meta:
         model = Product
-        fields = ["id", "name", "description", "price", "rate", "expiration_date", "type", "image"]
+        fields = ["id", "name", "description", "price", "rate", "expiration_date", "type", "image", "stock"]
 
 
 class ProductImageUpdateSerialiser(serializers.ModelSerializer):

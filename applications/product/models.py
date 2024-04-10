@@ -30,6 +30,7 @@ class Product(models.Model):
     expiration_date = models.DateTimeField(default=expiration, null=True)
     type = models.ForeignKey(TypeProduct, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=upload_to, blank=True)
+    stock = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
