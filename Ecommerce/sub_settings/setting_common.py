@@ -14,6 +14,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150", "ecommerce-pm4j.onrender.com"]
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,13 +56,10 @@ SWAGGER_SETTINGS = {
     },
 }
 
-list1 = [
+MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-]
-
-MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -76,11 +74,6 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
 ]
 
-# if os.getenv("DEBUG_MODE") != "True":
-#     list1.append('whitenoise.middleware.WhiteNoiseMiddleware')
-
-
-MIDDLEWARE = list1 + MIDDLEWARE
 
 ROOT_URLCONF = 'Ecommerce.urls'
 
@@ -99,6 +92,18 @@ TEMPLATES = [
         },
     },
 ]
+
+ASGI_APPLICATION = "Ecommerce.asgi.application"
+CHANNELS_WS_PROTOCOLS = ['websocket']
+CHANNELS_WS_ALLOWED_PROTOCOLS = ['websocket']
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        }
+    }
+}
 
 WSGI_APPLICATION = 'Ecommerce.wsgi.application'
 
