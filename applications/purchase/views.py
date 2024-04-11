@@ -36,7 +36,7 @@ class PurchaseViewSet(viewsets.ModelViewSet):
         else:
             self.permission_classes = [IsAuthenticated]
         return super(PurchaseViewSet, self).get_permissions()
-IsAuthenticated
+
 
 class OrderViewSets(viewsets.ModelViewSet):
     """
