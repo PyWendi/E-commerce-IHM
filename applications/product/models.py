@@ -29,7 +29,7 @@ class Product(models.Model):
     rate = models.IntegerField(default=0)
     expiration_date = models.DateTimeField(default=expiration, null=True)
     type = models.ForeignKey(TypeProduct, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=upload_to, blank=True)
+    image = models.ImageField(upload_to=upload_to, blank=True, null=True)
     stock = models.IntegerField(default=0)
 
     def __str__(self):

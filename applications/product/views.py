@@ -14,7 +14,13 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from .serialisers import TypeProductSerializer, ProductSerializer, TypeAndProductSerialiser, ProductImageUpdateSerialiser, RateSerialiser
+from .serialisers import (
+    TypeProductSerializer,
+    ProductSerializer,
+    TypeAndProductSerialiser,
+    TypeProductWithProductSerializer,
+    ProductImageUpdateSerialiser,
+    RateSerialiser)
 from .models import TypeProduct, Product, Rating
 
 
@@ -29,6 +35,12 @@ class TypeProductViewSet(viewsets.ModelViewSet):
     serializer_class = TypeProductSerializer
     authentication_classes = [JWTAuthentication]
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['patch']]
+
+    def get_serializer_class(self):
+        print(self.action)
+        if self.action in ['retrieve']:
+            return TypeProductWithProductSerializer
+        return TypeProductSerializer
 
     def get_permissions(self):
         """
@@ -75,9 +87,9 @@ class ProductViewSet(viewsets.ModelViewSet):
             self.permission_classes = []
         return super(ProductViewSet, self).get_permissions()
 
-    async def perform_create(self, serializer):
+    def perform_create(self, serializer):
         type_id = self.request.data.get("type")
-        type_product = await TypeProduct.objects.get(pk=type_id)
+        type_product = TypeProduct.objects.get(pk=type_id)
         serializer.save(type=type_product)
 
     """-------Extra views--------"""
