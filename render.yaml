@@ -23,3 +23,13 @@ services:
         value: 4
       - key: DEBUG_MODE
         value: "False"
+
+    volumes:
+      - name: db-volume
+        path: db.sqlite
+      - name: migrations-authentication
+        path: /applications/authentication/migrations
+      - name: migrations-product
+        path: /applications/product/migrations
+      - name: migrations-purchase
+        path: /applications/purchase/migrations

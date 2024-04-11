@@ -24,11 +24,10 @@ class OrderSerialiser(serializers.ModelSerializer):
 
 
 class PurchaseSerialiser(serializers.ModelSerializer):
-    # client = UserSerializer(source="client_set")
     client = CustomUser()
     date = serializers.DateTimeField(read_only=True)
     orders = OrderSerialiser(source="order_set", many=True, read_only=True)
 
     class Meta:
         model = Purchase
-        fields = ["id", "date", "client", "orders"]
+        fields = ["id", "date", "client", "address", "orders"]

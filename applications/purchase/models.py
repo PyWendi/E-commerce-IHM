@@ -2,7 +2,8 @@ from django.db import models
 
 class Purchase(models.Model):
     date = models.DateTimeField(auto_now_add=True)
-    client = models.ForeignKey("authentication.CustomUser", on_delete=models.CASCADE)
+    client = models.ForeignKey("authentication.CustomUser", verbose_name="client_set", on_delete=models.CASCADE)
+    address = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         ordering = ["-date"]
