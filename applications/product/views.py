@@ -39,7 +39,7 @@ class TypeProductViewSet(viewsets.ModelViewSet):
         if self.action in ["create", "update", "delete"]:
             self.permission_classes = [IsAuthenticated, IsAdminUser]
         else:
-            self.permission_classes = [IsAuthenticated]
+            self.permission_classes = []
         return super(TypeProductViewSet, self).get_permissions()
 
 
@@ -72,7 +72,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         if self.action in ["create", "update", "delete", "update_image"]:
             self.permission_classes = [IsAuthenticated, IsAdminUser]
         else:
-            self.permission_classes = [IsAuthenticated]
+            self.permission_classes = []
         return super(ProductViewSet, self).get_permissions()
 
     async def perform_create(self, serializer):
