@@ -16,3 +16,4 @@ django-cors-headers
 dj-database-url
 whitenoise[brotli]
 channels_redis
+websockets
