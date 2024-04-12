@@ -4,6 +4,8 @@ from rest_framework import permissions
 
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from .sub_settings import setting_common
 
 """
 Setting for the entire API discovery using swagger through openAPI
@@ -39,3 +41,5 @@ urlpatterns = [
     path("api/", include("applications.product.urls")),
     path("api/", include("applications.purchase.urls")),
 ]
+
+urlpatterns += static(setting_common.MEDIA_URL, document_root=setting_common.MEDIA_ROOT)
