@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -182,3 +182,16 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response({"rate": product.rate}, status=status.HTTP_201_CREATED)
 
 
+import os
+from pathlib import Path
+@api_view(["GET"])
+def list_media_files(request):
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    media_root = os.path.join(BASE_DIR, 'media') # Assuming BASE_DIR is defined in your settings
+    media_files = []
+    for root, dirs, files in os.walk(media_root):
+        for file in files:
+            file_path = os.path.join(root, file)
+            media_files.append(file_path)
+
+    return Response({'media_files': media_files})
