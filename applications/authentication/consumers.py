@@ -9,7 +9,7 @@ class ClientConsummer(WebsocketConsumer):
     """
     def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = f"client_{self.room_name}"
+        self.room_group_name = f"admin_{self.room_name}"
 
         # join group room
         async_to_sync(self.channel_layer.group_add)(

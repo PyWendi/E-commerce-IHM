@@ -64,14 +64,15 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(methods=["put"], detail=True, parser_classes=[MultiPartParser, FormParser], serializer_class=ProfileImageSerializer)
     async def update_profile(self, request, pk):
-        user = await get_object_or_404(get_user_model(), pk=pk)
+        # user = await get_object_or_404(get_user_model(), pk=pk)
+        user = request.user
         profile_img = request.FILES.get("profile_img") if request.FILES.get("profile_img") else None
         data = {"profile_img": profile_img}
 
         serializer = self.serializer_class(user, data=data)
         if serializer.is_valid():
             await serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

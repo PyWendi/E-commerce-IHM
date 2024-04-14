@@ -10,6 +10,10 @@ class OrderSerialiser(serializers.ModelSerializer):
     purchase = serializers.PrimaryKeyRelatedField(queryset=Purchase.objects.all())
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
 
+class OrderDetailedSerialiser(serializers.ModelSerializer):
+    purchase = serializers.PrimaryKeyRelatedField(queryset=Purchase.objects.all())
+    product = ProductSerializer(read_only=True)
+
     # def create(self, validated_data):
     #     print("Inside create overrider")
     #     print(validated_data.pop("product")[0])
@@ -27,7 +31,20 @@ class PurchaseSerialiser(serializers.ModelSerializer):
     client = CustomUser()
     date = serializers.DateTimeField(read_only=True)
     orders = OrderSerialiser(source="order_set", many=True, read_only=True)
+    account_number = serializers.CharField(write_only=True)
+
 
     class Meta:
         model = Purchase
-        fields = ["id", "date", "client", "address", "orders"]
+        fields = ["id", "date", "client", "address", "orders", "payement_mode", "account_number"]
+
+class PurchaseWithDetailedSerialiser(serializers.ModelSerializer):
+    client = CustomUser()
+    date = serializers.DateTimeField(read_only=True)
+    orders = OrderDetailedSerialiser(source="order_set", many=True, read_only=True)
+    account_number = serializers.CharField(write_only=True)
+
+
+    class Meta:
+        model = Purchase
+        fields = ["id", "date", "client", "address", "orders", "payement_mode", "account_number"]
