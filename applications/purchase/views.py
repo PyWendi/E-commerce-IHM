@@ -38,6 +38,15 @@ class PurchaseViewSet(viewsets.ModelViewSet):
 
     ```
     Perform `create`, `list`, `read` operations
+
+    For the creation just provide the following data and
+    not the body request showcase in the request sample
+
+    @body = {
+        address: <adress>(string),
+        payement_mode: <payement_mode>(string),
+        account_number: <account_number>(string)
+    }
     ```
     """
     serializer_class = PurchaseSerialiser
@@ -49,8 +58,6 @@ class PurchaseViewSet(viewsets.ModelViewSet):
         if self.action == 'retrieve':
             return PurchaseWithDetailedSerialiser
         return PurchaseSerialiser
-        # elif self.action == "create":
-        #     return PurchaseOperationSerialiser
 
     def get_permissions(self):
         """
@@ -73,22 +80,24 @@ class PurchaseViewSet(viewsets.ModelViewSet):
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(room, data)
 
-
+    @swagger_auto_schema(
+        methods=["PUT"],
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
     @action(
         methods=["PUT"],
         detail=False,
-        serializer_class=[PurchaseSerialiser]
     )
     def validate_payement(self, request):
         """
         Valider le payement de l'utilisateur, Attend les information suivante
         ```
         {
-            mont    ant: <montant>
+            montant: <montant>
         }
         ```
         Retourne le status_code ```200``` et le data ```{"message": "Transaction effectue."}``` en tant que reponse.
-        Dans le cas ou le montant est superieur au solde, on obtient le status code ```200``` et le data ```{"message": "Montant superieur au solde du client"}``` en tant
+        Dans le cas ou le montant est superieur au solde, on obtient le status code ```400``` et le data ```{"message": "Montant superieur au solde du client"}``` en tant
         que reponse.
         """
         user = get_user_model()
@@ -251,13 +260,15 @@ class OrderViewSets(viewsets.ModelViewSet):
                 purchaseId: <purchaseId>(int),
                 indexes: <[index]>(array of index)(integer),
                 orders: [{
-                    purchase: purchaseID(int),
-                    product: productId(int),
-                    quantity: quantite(int)
+                    purchase: <purchaseID>(int),
+                    product: <productId>(int),
+                    quantity: <quantite>(int)
                 }]
             }
         ```
-        ```@return status=200:```
+        `@return status=200:`
+        All methode also trigger two `channels` which handle `client` `interface re-render`
+        | `client_rerend` and `admin_notification`
         """
         if isinstance(request.data.get("orders"), list):
             order_creation_done = self.mass_notification_assignement(request)
