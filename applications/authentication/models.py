@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .manager import CustomUserManager
 
@@ -31,7 +33,26 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.first_name
 
 
-from django.db import models
+class Notification(models.Model):
+    TYPE_CHOICE = [
+        ("achat", "Achat"),
+        ("livraison", "Livraison"),
+    ]
+
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    sender = models.IntegerField()
+    type = models.CharField(max_length=15, choices=TYPE_CHOICE)
+    purchaseId = models.IntegerField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expiration_duration = models.DurationField(default=timedelta(weeks=4))
+    seen = models.BooleanField(default=False)
+    class Meta:
+        ordering = ["-created_at"]
+
+    def isExpired(self):
+        expired_time = self.created_at + self.expiration_duration
+        return expired_time <= timezone.now()
+
 
 class UploadedFile(models.Model):
     file = models.FileField(upload_to="images", blank=True)

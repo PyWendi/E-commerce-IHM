@@ -1,5 +1,5 @@
 from channels.middleware import BaseMiddleware
-from channels.auth import AuthMiddlewareStack
+# from channels.auth import AuthMiddlewareStack
 
 class AllowAnyOriginMiddleware(BaseMiddleware):
     async def __call__(self, scope, receive, send):
@@ -21,8 +21,10 @@ class AllowedOriginsMiddleware(BaseMiddleware):
 
     async def __call__(self, scope, receive, send):
         if "origin" in scope.get("headers", []):
-            origin = scope["headers"][scope["headers"].index(b'origin') + 1].decode()
-            if origin not in self.allowed_origins:
-                raise ValueError("Origin not allowed !")
+            origin_index = next((i for i, (key, value) in enumerate(scope["headers"]) if key == b'origin'), None)
+            if origin_index is not None:
+                origin = scope["headers"][origin_index + 1].decode()
+                if origin not in self.allowed_origins:
+                    raise ValueError("Origin not allowed !")
 
         return await super().__call__(scope, receive, send)

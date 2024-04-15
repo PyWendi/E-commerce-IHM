@@ -7,8 +7,11 @@ class Purchase(models.Model):
     payement_mode = models.CharField(max_length=50, null=False, blank=True)
     account_number = models.CharField(max_length=15, null=False, blank=True)
 
+    is_delivered = models.BooleanField(default=False)
+    delivery_date = models.DateTimeField(null=True)
+
     class Meta:
-        ordering = ["-date"]
+        ordering = ["-date", "is_delivered"]
 
     def __str__(self):
         return self.date.strftime('%Y-%m-%d %H:%M:%S')

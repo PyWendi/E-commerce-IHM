@@ -37,7 +37,6 @@ class TypeProductViewSet(viewsets.ModelViewSet):
     http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['patch']]
 
     def get_serializer_class(self):
-        print(self.action)
         if self.action in ['retrieve']:
             return TypeProductWithProductSerializer
         return TypeProductSerializer
@@ -116,35 +115,6 @@ class ProductViewSet(viewsets.ModelViewSet):
             await serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(responses={200: "OK", 400: "Product Does Not Exist"})
-    @action(
-        methods=["PUT"],
-        detail=False,
-        serializer_class=[]
-    )
-    def update_stock(self, request):
-        """
-        ```Update``` of the stock of ```each product``` that has been selected ```during the purchase```
-        If OK return status ```200```
-        Or else return ```400``` if the one of ```product does not exist```
-        """
-        try:
-            data = request.data.get("data")
-
-            for product_data in data:
-                try:
-                    product = Product.objects.get(pk=int(product_data["id"]))
-                except Product.DoesNotExist:
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
-
-                product.stock = product.stock - product_data["number"]
-                product.save()
-
-            return Response(status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(request_body=RateSerialiser, responses={201: "{'rate': rate_value}", 400: "Not updated"})
     @action(

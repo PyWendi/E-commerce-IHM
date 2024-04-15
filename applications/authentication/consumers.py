@@ -1,67 +1,127 @@
 import json
 
-from channels.generic.websocket import WebsocketConsumer
-from asgiref.sync import async_to_sync
+from channels.generic.websocket import AsyncWebsocketConsumer
 
-class ClientConsummer(WebsocketConsumer):
+class ClientConsummer(AsyncWebsocketConsumer):
     """
     Asynchrone version of the client consummer
     """
-    def connect(self):
-        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = f"admin_{self.room_name}"
+    async def connect(self):
+        self.clientId = self.scope["url_route"]["kwargs"]["clientId"]
+        self.room_group_name = f"client_{self.clientId}_notification"
 
         # join group room
-        async_to_sync(self.channel_layer.group_add)(
+        await self.channel_layer.group_add(
             self.room_group_name, self.channel_name
         )
 
-        self.accept()
+        await self.accept()
 
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         """
         Leave room group
         """
-        async_to_sync(self.channel_layer.group_discard)(
+        await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
 
     """
     Recieve message from websocket
     """
-    def receive(self, text_data=None):
+    async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
 
         # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, {"type": "client_message", "message": message}
+        await self.channel_layer.group_send(
+            self.room_group_name, {"type": "client_notification", "operation": text_data_json}
         )
 
     """
     Send back message from room group via websocket
     """
-    def client_message(self, event):
-        message = event["message"]
+    async def client_notification(self, event):
+        print(event)
+        operation = event["operation"]
 
         # Sending message to websocket
-        self.send(text_data=json.dumps({"message": message}))
+        await self.send(text_data=json.dumps({"opeartion": operation}))
 
 
+class AdminNotificationConsummer(AsyncWebsocketConsumer):
     """
-    This is the synchrone version
+    Consumme datd `for administrator from user` after purchase via channel in the room `admin_notification`
     """
-    # def connect(self):
-    #     print("***********\nA user is connected\n--------")
-    #     self.accept()
-    #
-    # def disconnect(self, close_code):
-    #     print("-----------\nA user is disconnected\n************")
-    #     pass
-    #
-    # def receive(self, text_data):
-    #     print("Data recieved succesfully *********")
-    #     text = json.loads(text_data)
-    #     message = text["message"]
-    #
-    #     self.send(text_data=json.dumps({"message": message}))
+    async def connect(self):
+        # join group room
+        self.room_group_name = "admin_notification"
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        print(self.channel_name)
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        """
+        Leave room group
+        """
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+    """
+    Recieve message from websocket
+    """
+
+    async def receive(self, text_data=None):
+        print("Inside recieve*************")
+        data_loaded = json.loads(text_data)
+
+        # Send message to room group
+        await self.channel_layer.group_send(self.room_group_name, {
+            "type": "admin_notification",
+            "operation": data_loaded
+        })
+
+    """
+    Send back message from room group via websocket
+    """
+    async def admin_notification(self, event):
+        operation = event["operation"]
+
+        # Sending message to websocket
+        await self.send(text_data=json.dumps({"operation": operation}))
+
+
+class ClientRerendInterfaceConsumer(AsyncWebsocketConsumer):
+    """
+    Consumme datd `for administrator from user` after purchase via channel in the room `admin_notification`
+    """
+    async def connect(self):
+        # join group room
+        self.room_group_name = "client_rerend"
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        """
+        Leave room group
+        """
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+    """
+    Recieve message from websocket
+    """
+
+    async def receive(self, text_data=None):
+        data_loaded = json.loads(text_data)
+        # Send message to room group
+        await self.channel_layer.group_send(self.room_group_name, {
+            "type": "client_rerend",
+            "operation": data_loaded
+        })
+
+    """
+    Send back message from room group via websocket
+    """
+    async def client_rerend(self, event):
+        operation = event["data"]
+
+        # Sending message to websocket
+        await self.send(text_data=json.dumps(operation))

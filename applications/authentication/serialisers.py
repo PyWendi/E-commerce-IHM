@@ -2,7 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import UploadedFile
+from .models import UploadedFile, Notification
+from applications.purchase.serialisers import Purchase, PurchaseSimpleDataSerialiser
 
 """
 Custom the content of the token generated
@@ -51,11 +52,31 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return user.objects.create_user(**validated_data)
 
 
-
 class ProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ["profile_img"]
+
+
+class NotificationSeriliser(serializers.ModelSerializer):
+    purchase_details = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(read_only=True)
+    expiration_duration = serializers.DurationField(read_only=True)
+    seen = serializers.BooleanField(required=False)
+
+    class Meta:
+        model = Notification
+        fields = "__all__"
+
+    def get_purchase_details(self, obj):
+        purchaseId = obj.purchaseId
+        try:
+            purchase = Purchase.objects.get(pk=purchaseId)
+            serialiser = PurchaseSimpleDataSerialiser(purchase)
+            return serialiser.data
+        except Purchase.DoesNotExist:
+            print("No purchase found on get extra content.")
+            return None
 
 
 class FileUploadSerializer(serializers.ModelSerializer):

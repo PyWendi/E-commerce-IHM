@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from applications.authentication.serialisers import UserSerializer
 from applications.authentication.models import CustomUser
 from applications.product.models import Product
 from applications.product.serialisers import ProductSerializer
@@ -9,6 +8,10 @@ from .models import Purchase, Order
 class OrderSerialiser(serializers.ModelSerializer):
     purchase = serializers.PrimaryKeyRelatedField(queryset=Purchase.objects.all())
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+
+    class Meta:
+        model = Order
+        fields = "__all__"
 
 class OrderDetailedSerialiser(serializers.ModelSerializer):
     purchase = serializers.PrimaryKeyRelatedField(queryset=Purchase.objects.all())
@@ -24,19 +27,36 @@ class OrderDetailedSerialiser(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["id", "purchase", "quantity", "product"]
+        fields = "__all__"
 
 
 class PurchaseSerialiser(serializers.ModelSerializer):
-    client = CustomUser()
+    client = serializers.PrimaryKeyRelatedField(read_only=True)
     date = serializers.DateTimeField(read_only=True)
     orders = OrderSerialiser(source="order_set", many=True, read_only=True)
-    account_number = serializers.CharField(write_only=True)
-
+    account_number = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Purchase
-        fields = ["id", "date", "client", "address", "orders", "payement_mode", "account_number"]
+        fields = "__all__"
+
+class PurchaseForUpdateSerialiser(serializers.ModelSerializer):
+    client = serializers.PrimaryKeyRelatedField(read_only=True)
+    date = serializers.DateTimeField(read_only=True)
+    account_number = serializers.CharField(read_only=True, required=False)
+
+    class Meta:
+        model = Purchase
+        fields = "__all__"
+
+class PurchaseSimpleDataSerialiser(serializers.ModelSerializer):
+    client = serializers.PrimaryKeyRelatedField(read_only=True)
+    date = serializers.DateTimeField(read_only=True)
+    account_number = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Purchase
+        fields = "__all__"
 
 class PurchaseWithDetailedSerialiser(serializers.ModelSerializer):
     client = CustomUser()
@@ -47,4 +67,4 @@ class PurchaseWithDetailedSerialiser(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ["id", "date", "client", "address", "orders", "payement_mode", "account_number"]
+        fields = "__all__"
