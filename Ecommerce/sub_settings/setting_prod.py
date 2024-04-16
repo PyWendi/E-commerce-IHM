@@ -3,16 +3,7 @@ from datetime import timedelta
 import os
 print("PRODUCTION SETTING")
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': env.get("DATABASE_NAME"),
-    #     'USER': env.get("DATABASE_USER"),
-    #     'PASSWORD': env.get("DATABASE_PASSWORD"),
-    #     'HOST': env.get("DATABASE_HOST"),
-    #     'PORT': env.get("DATABASE_PORT"),
-    # }
     'default': dj_database_url.config(
-            # Replace this value with your local database's connection string.
             default=os.getenv("DATABASE_URL"),
             conn_max_age=600
         )

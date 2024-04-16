@@ -220,7 +220,7 @@ class OrderViewSets(viewsets.ModelViewSet):
         async_to_sync(channel.group_send)(room, message_data)
 
     # This fonction us used to handle multiple insertion of an instance
-    def mass_notification_assignement(self, request):
+    def mass_orders_update(self, request):
         try:
             serialiser = self.serializer_class(data=request.data.get("orders"), many=True)
             # orders = serialiser.validated_data
@@ -243,10 +243,9 @@ class OrderViewSets(viewsets.ModelViewSet):
         except Exception as e:
             return Response(data={
                 "message": "Une erreur est servenu, veuiller reessayer.",
-                "erreur": e
+                "erreur": str(e)
             })
 
-    # @database_sync_to_async
     @swagger_auto_schema(request_body=OrderSerialiser, responses={
         200: "OK",
         400: "Erreur lors de la validation de l'achat.",
@@ -271,7 +270,7 @@ class OrderViewSets(viewsets.ModelViewSet):
         | `client_rerend` and `admin_notification`
         """
         if isinstance(request.data.get("orders"), list):
-            order_creation_done = self.mass_notification_assignement(request)
+            order_creation_done = self.mass_orders_update(request)
 
             if order_creation_done:
                 # Creating notification from user to admin
@@ -289,7 +288,7 @@ class OrderViewSets(viewsets.ModelViewSet):
 
                 except Exception as e:
                     return Response({
-                        "Erreur": e,
+                        "Erreur": str(e),
                         "message": "Une erreur est survenu, veuiller reessayer plutard."
                     }, status=status.HTTP_400_BAD_REQUEST)
 
