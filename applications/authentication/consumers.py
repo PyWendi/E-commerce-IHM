@@ -114,7 +114,7 @@ class ClientRerendInterfaceConsumer(AsyncWebsocketConsumer):
         # Send message to room group
         await self.channel_layer.group_send(self.room_group_name, {
             "type": "client_rerend",
-            "operation": data_loaded
+            "data": data_loaded
         })
 
     """
