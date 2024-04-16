@@ -4,10 +4,20 @@
 *.pyc
 __pycache__/
 db.sqlite3
-media/** */
+
 staticfiles/
 **/migrations/*
 !**/migrations/__init__.py
+
+# Media folder
+# Ignore everything inside the media folder
+media/*
+media/*/*
+media/*/*/*
+# ... and so on for as many levels of subdirectories as you have
+
+# Include the media folder itself
+!media/
 
 
 # Backup files #
