@@ -9,10 +9,9 @@ from datetime import timedelta
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
+print("DEVELOPEMENT SETTING")
 DATABASES = {
     'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
         default=os.getenv("DATABASE_URL"),
         conn_max_age=600
     )

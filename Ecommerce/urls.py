@@ -42,4 +42,4 @@ urlpatterns = [
     path("api/", include("applications.purchase.urls")),
 ]
 
-# urlpatterns += static(setting_common.MEDIA_URL, document_root=setting_common.MEDIA_ROOT)
+urlpatterns += static(setting_common.MEDIA_URL, document_root=setting_common.MEDIA_ROOT)

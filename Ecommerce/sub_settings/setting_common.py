@@ -11,7 +11,7 @@ load_dotenv(str(ENV_FILE_PATH))
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150", "ecommerce-pm4j.onrender.com", "102.68.192.210"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', "192.168.43.150", "ecommerce-pm4j.onrender.com", "41.77.17.13"]
 
 INSTALLED_APPS = [
     'daphne',
@@ -102,7 +102,6 @@ CHANNEL_LAYERS = {
         "CONFIG": {
             "hosts": [os.getenv("REDIS_URL")+"/0"],
             # "hosts": [(os.getenv("REDIS_URL"), os.getenv("REDIS_PORT"))],
-            # "password": os.getenv("REDIS_PASSWORD")
         }
     }
 }

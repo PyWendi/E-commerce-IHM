@@ -119,7 +119,7 @@ class PurchaseViewSet(viewsets.ModelViewSet):
             return Response(
                 {
                     "Erreur": "Veuiller verifier les informations inserer",
-                    "type": e
+                    "type": str(e)
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -175,7 +175,7 @@ class PurchaseViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={
                 "message": "Une erreur est survenu, veuiller reessayer plutard.",
-                "Erreur": e
+                "Erreur": str(e)
             })
 
 

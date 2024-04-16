@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, UploadedFile
+from .models import CustomUser, UploadedFile, Notification
 
 
 class CustomUserAdmin(UserAdmin):
@@ -38,4 +38,5 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Notification)
 admin.site.register(UploadedFile)
