@@ -116,13 +116,13 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(request_body=RateSerialiser, responses={201: "{'rate': rate_value}", 400: "Not updated"})
+    @swagger_auto_schema(methods=["POST"] ,request_body=RateSerialiser, responses={201: "{'rate': rate_value}", 400: "Not updated"})
     @action(
         methods=["POST"],
         detail=True,
         serializer_class=RateSerialiser,
     )
-    async def rate(self, request, pk):
+    def rate(self, request, pk):
         """
         ```
         $ '[Set rating for a product]'
@@ -137,19 +137,48 @@ class ProductViewSet(viewsets.ModelViewSet):
         ```
         `RETURN THE AVERAGE FINALE RATE VALUE`
         """
-        product = await get_object_or_404(Product, pk=pk)
+        product = get_object_or_404(Product, pk=pk)
         rate_value = int(request.data["rate_value"] if request.data["rate_value"] else 0)
-        await Rating.objects.update_or_create(
+        Rating.objects.update_or_create(
             product=product.id,
             user_id=request.user.id,
             defaults={"product": product, "user_id": request.user.id, "rate_value": rate_value}
         )
 
         # We take the average value of rating for a product
-        rate = await Rating.objects.filter(product=product).aggregate(average_rate=Avg("rate_value"))
+        rate = Rating.objects.filter(product=product).aggregate(average_rate=Avg("rate_value"))
         product.rate = int(rate["average_rate"])
         product.save()
         return Response({"rate": product.rate}, status=status.HTTP_201_CREATED)
+    
+    
+    @swagger_auto_schema(methods=["GET"] , responses={201: "{'rate': rate_value}", 400: "Not updated"})
+    @action(
+        methods=["GET"],
+        detail=False,
+        url_path="search/name/(?P<search>[a-zA-Z]+)"
+    )
+    def lookup(self, request, search=None):
+        """
+        _summary_
+        ```
+        #This API is used to search products by their name which is inserted in the url
+        @request -> str:[a-zA-Z]+
+        ```
+        """
+        try:
+            if not search.isalpha():
+                return Response({
+                    "Error": "La recherche doit seulement contenir des carateres alphabetiques."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            products = Product.objects.filter(name__icontains=search)
+            serializer = self.serializer_class(products, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "Message": "Une erreur s'est produite, veuiller reesayer plutard.",
+                "Error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 import os

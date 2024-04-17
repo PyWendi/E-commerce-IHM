@@ -12,6 +12,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "price", "rate", "expiration_date", "type", "image", "stock"]
 
 
+
 class ProductImageUpdateSerialiser(serializers.ModelSerializer):
     class Meta:
         model = Product
