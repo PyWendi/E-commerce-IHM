@@ -1,0 +1,25 @@
+name: Django E-commerce backend application CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.7, 3.8, 3.9, 3.11]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Trigger render deployement server and deploy
+      if: github.ref == 'refs/heads/main'
+      env:
+        hook_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      run: |
+        curl "$hook_url"
