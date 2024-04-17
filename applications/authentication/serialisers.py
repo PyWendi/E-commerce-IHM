@@ -5,6 +5,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import UploadedFile, Notification
 from applications.purchase.serialisers import Purchase, PurchaseSimpleDataSerialiser
 
+from applications.purchase.serialisers import PurchaseForUserSerialiser
+
 """
 Custom the content of the token generated
 """
@@ -50,6 +52,20 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         user = get_user_model()
         return user.objects.create_user(**validated_data)
+    
+    
+    
+class UserPurchaseSerializer(serializers.ModelSerializer):
+    
+    purchases = PurchaseForUserSerialiser(source="purchase_set", many=True)
+    
+    class Meta:
+        model = get_user_model()
+        fields = ["id", "purchases"]
+
+
+
+
 
 
 class ProfileImageSerializer(serializers.ModelSerializer):

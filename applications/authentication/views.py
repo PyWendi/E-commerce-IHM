@@ -1,28 +1,34 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
-from django.http import FileResponse
-from django.db.models import QuerySet
-from django.shortcuts import get_object_or_404, get_list_or_404
+# from django.http import FileResponse
+# from django.db.models import QuerySet
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 
 # handle rest views
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view, action
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 # handle token behavior
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .serialisers import CustomTokenObtainPairSerialiser
 
 # Handle swagger
 from drf_yasg.utils import swagger_auto_schema
 
 # Handle serialiser and models
-from .serialisers import ProfileImageSerializer, FileUploadSerializer, UserSerializer, NotificationSeriliser
+from .serialisers import (
+    ProfileImageSerializer, 
+    FileUploadSerializer, 
+    UserSerializer, 
+    NotificationSeriliser,
+    UserPurchaseSerializer
+    )
 from .models import UploadedFile, Notification
 
 # Handle channel
@@ -36,9 +42,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     Customise the token which will return within the api
     """
     serializer_class = CustomTokenObtainPairSerialiser
-    # def get_token_for_user(self,user):
-    #     pass
-
+    
+    
 class UserViewSet(viewsets.ModelViewSet):
     """
     This API provide most action for performing CRUD operation on the `client` model
@@ -68,6 +73,12 @@ class UserViewSet(viewsets.ModelViewSet):
             return [JWTAuthentication()]
         return super(UserViewSet, self).get_authenticators()
 
+
+    @swagger_auto_schema(
+        methods=["PUT"],
+        request_body=ProfileImageSerializer,
+        responses={200: "OK", 400: "BAD request", 500: "SERVER ERROR"}
+    )
     @action(methods=["put"], detail=True, parser_classes=[MultiPartParser, FormParser], serializer_class=ProfileImageSerializer)
     async def update_profile(self, request, pk):
         # user = await get_object_or_404(get_user_model(), pk=pk)
@@ -80,6 +91,25 @@ class UserViewSet(viewsets.ModelViewSet):
             await serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    @swagger_auto_schema(
+        methods=["GET"],
+        responses={
+            200: "OK", 
+            400: "BAD request", 
+            500: "SERVER ERROR"}
+    )
+    @action(methods=["GET"], detail=False, serializer_class=UserPurchaseSerializer)
+    def purchase_list(self, request):
+        user = request.user
+        try:
+            serialiser = UserPurchaseSerializer(user)
+            return Response(serialiser.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "Error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @swagger_auto_schema(request_body=FileUploadSerializer, responses={200: "Updated", 400: "Not updated"})

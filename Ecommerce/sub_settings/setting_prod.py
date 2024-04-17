@@ -1,6 +1,7 @@
 from .setting_common import *
 from datetime import timedelta
 import os
+
 print("PRODUCTION SETTING")
 DATABASES = {
     'default': dj_database_url.config(

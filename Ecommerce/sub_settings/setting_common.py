@@ -70,7 +70,8 @@ MIDDLEWARE = [
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
-    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher','django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
 ]
 
@@ -100,8 +101,8 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.getenv("REDIS_URL")+"/0"],
-            # "hosts": [(os.getenv("REDIS_URL"), os.getenv("REDIS_PORT"))],
+            # "hosts": [os.getenv("REDIS_URL")+"/0"],
+            "hosts": [(os.getenv("REDIS_URL"), os.getenv("REDIS_PORT"))],
         }
     }
 }

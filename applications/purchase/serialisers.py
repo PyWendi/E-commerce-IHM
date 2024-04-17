@@ -68,3 +68,10 @@ class PurchaseWithDetailedSerialiser(serializers.ModelSerializer):
     class Meta:
         model = Purchase
         fields = "__all__"
+
+class PurchaseForUserSerialiser(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Purchase
+        fields = ["id", "address", "date", "payement_mode", "is_delivered", "delivery_date"]
+

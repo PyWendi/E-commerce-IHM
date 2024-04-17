@@ -6,9 +6,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_FILE_PATH = BASE_DIR / ".env"
 load_dotenv(str(ENV_FILE_PATH))
 
-DEBUG = True if (os.getenv("DEBUG_MODE") == "True") else False
+DEBUG = True if (os.getenv("DEBUG") == "True") else False
 
-if os.getenv('DEBUG_MODE') == 'True':
+if DEBUG:
     from .sub_settings.setting_dev import *
 else:
     from .sub_settings.setting_prod import *
