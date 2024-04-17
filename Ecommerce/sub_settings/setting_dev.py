@@ -17,6 +17,7 @@ DATABASES = {
     )
 }
 
+
 """
 Simple JWT settings
 """

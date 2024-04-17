@@ -94,6 +94,11 @@ TEMPLATES = [
     },
 ]
 
+REDIS_HOST_CONFIG_ON_SERVER_OR_LOCALLY = [os.getenv("REDIS_URL")+"/0"]
+# REDIS_HOST_CONFIG_ON_SERVER_OR_LOCALLY = [(os.getenv("REDIS_URL"), os.getenv("REDIS_PORT"))]
+print(REDIS_HOST_CONFIG_ON_SERVER_OR_LOCALLY)
+
+
 ASGI_APPLICATION = "Ecommerce.asgi.application"
 CHANNELS_WS_PROTOCOLS = ['websocket']
 CHANNELS_WS_ALLOWED_PROTOCOLS = ['websocket']
@@ -101,8 +106,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            # "hosts": [os.getenv("REDIS_URL")+"/0"],
-            "hosts": [(os.getenv("REDIS_URL"), os.getenv("REDIS_PORT"))],
+            "hosts": REDIS_HOST_CONFIG_ON_SERVER_OR_LOCALLY,
         }
     }
 }
