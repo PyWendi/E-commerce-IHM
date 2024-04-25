@@ -64,3 +64,16 @@ class UploadedFile(models.Model):
 
     def get_file_url(self):
         return self.file.url
+
+
+
+class Contact(models.Model):
+
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
+    text = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+

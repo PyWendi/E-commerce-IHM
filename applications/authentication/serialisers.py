@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import UploadedFile, Notification
+from .models import UploadedFile, Notification, Contact
 from applications.purchase.serialisers import Purchase, PurchaseSimpleDataSerialiser
 
 from applications.purchase.serialisers import PurchaseForUserSerialiser
@@ -99,3 +99,12 @@ class FileUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = UploadedFile
         fields = ('file',)
+
+
+"""
+Contact serialiser
+"""
+class ContactSerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = "__all__"
