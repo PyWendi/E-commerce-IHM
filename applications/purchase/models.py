@@ -3,6 +3,7 @@ from django.db import models
 class Purchase(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey("authentication.CustomUser", verbose_name="client_set", on_delete=models.CASCADE)
+    ville = models.CharField(max_length=100, null=False, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
     payement_mode = models.CharField(max_length=50, null=False, blank=True)
     account_number = models.CharField(max_length=15, null=False, blank=True)
