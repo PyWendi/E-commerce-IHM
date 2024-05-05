@@ -16,7 +16,7 @@ class AllowAnyOriginMiddleware(BaseMiddleware):
 class AllowedOriginsMiddleware(BaseMiddleware):
     allowed_origins = [
         "http://127.0.0.1",
-        # "https://example.com",
+        "https://ecommerce-pm4j.onrender.com/api/",
     ]
 
     async def __call__(self, scope, receive, send):

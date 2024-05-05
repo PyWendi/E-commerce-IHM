@@ -236,6 +236,4 @@ class NotificationViewset(viewsets.ModelViewSet):
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerialiser
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    
+    http_method_names = [m for m in viewsets.ModelViewSet.http_method_names if m not in ['delete', 'update']]

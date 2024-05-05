@@ -68,7 +68,8 @@ class PurchaseViewSet(viewsets.ModelViewSet):
         if self.action in ["update", "update_image"]:
             self.permission_classes = [IsAuthenticated, IsAdminUser]
         else:
-            self.permission_classes = [IsAuthenticated]
+            # self.permission_classes = [IsAuthenticated]
+            pass
         return super(PurchaseViewSet, self).get_permissions()
 
     def perform_create(self, serializer):

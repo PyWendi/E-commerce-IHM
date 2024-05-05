@@ -36,6 +36,7 @@ class PurchaseSerialiser(serializers.ModelSerializer):
     orders = OrderSerialiser(source="order_set", many=True, read_only=True)
     account_number = serializers.CharField(write_only=True, required=False)
     ville = serializers.CharField(required=False)
+    pays = serializers.CharField(required=False)
 
     class Meta:
         model = Purchase
@@ -46,6 +47,7 @@ class PurchaseForUpdateSerialiser(serializers.ModelSerializer):
     date = serializers.DateTimeField(read_only=True)
     account_number = serializers.CharField(read_only=True, required=False)
     ville = serializers.CharField(required=False)
+    pays = serializers.CharField(required=False)
 
     class Meta:
         model = Purchase
@@ -56,6 +58,7 @@ class PurchaseSimpleDataSerialiser(serializers.ModelSerializer):
     date = serializers.DateTimeField(read_only=True)
     account_number = serializers.CharField(write_only=True)
     ville = serializers.CharField(required=False)
+    pays = serializers.CharField(required=False)
 
     class Meta:
         model = Purchase
@@ -67,6 +70,7 @@ class PurchaseWithDetailedSerialiser(serializers.ModelSerializer):
     orders = OrderDetailedSerialiser(source="order_set", many=True, read_only=True)
     account_number = serializers.CharField(write_only=True)
     ville = serializers.CharField(required=False)
+    pays = serializers.CharField(required=False)
 
 
     class Meta:
