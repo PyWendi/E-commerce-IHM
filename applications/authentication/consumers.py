@@ -70,7 +70,6 @@ class AdminNotificationConsummer(AsyncWebsocketConsumer):
     """
 
     async def receive(self, text_data=None):
-        print("Inside recieve*************")
         data_loaded = json.loads(text_data)
 
         # Send message to room group
@@ -83,7 +82,7 @@ class AdminNotificationConsummer(AsyncWebsocketConsumer):
     Send back message from room group via websocket
     """
     async def admin_notification(self, event):
-        operation = event["operation"]
+        operation = event["operation"] #Data from event
 
         # Sending message to websocket
         await self.send(text_data=json.dumps({"operation": operation}))

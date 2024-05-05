@@ -37,10 +37,11 @@ class Notification(models.Model):
     TYPE_CHOICE = [
         ("achat", "Achat"),
         ("livraison", "Livraison"),
+        ("contact", "Contact"),
     ]
 
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    sender = models.IntegerField()
+    sender = models.IntegerField(null=True)
     type = models.CharField(max_length=15, choices=TYPE_CHOICE)
     purchaseId = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
