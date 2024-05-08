@@ -21,9 +21,6 @@ class CustomTokenObtainPairSerialiser(TokenObtainPairSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    # snippets = serializers.HyperlinkedRelatedField(many=True, view_name='snippet-detail', read_only=True)
-    # snippets = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    # snippets = SnippetSerializer(many=True)
 
     profile_img = serializers.ImageField(read_only=True)
     password = serializers.CharField(write_only=True)
@@ -33,21 +30,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = [
-            'url',
-            'id',
-            'first_name',
-            "last_name",
-            "email",
-            "password",
-            "profile_img",
-            "is_active",
-            "is_staff",
-            "is_superuser",
-            "birthdate",
-            "card_number",
-            "solde",
-        ]
+        fields = "__all__"
 
     def create(self, validated_data):
         user = get_user_model()

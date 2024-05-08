@@ -41,7 +41,7 @@ class Notification(models.Model):
     ]
 
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    sender = models.IntegerField(null=True)
+    sender = models.IntegerField(null=True) #to be updated in the frontend side
     type = models.CharField(max_length=15, choices=TYPE_CHOICE)
     purchaseId = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
