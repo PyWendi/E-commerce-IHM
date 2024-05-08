@@ -19,7 +19,9 @@ DATABASES = {
 
 
 """
-Simple JWT settings
+Simple JWT settingsALTER TABLE products
+ALTER COLUMN description TYPE VARCHAR(500);
+
 """
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),

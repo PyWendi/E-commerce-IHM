@@ -1,6 +1,7 @@
 from .commonImport import *
 from ..serialisers import NotificationSeriliser
 from ..models import Notification
+from django.db.models import Q
 
 class NotificationViewset(viewsets.ModelViewSet):
     """
@@ -29,7 +30,26 @@ class NotificationViewset(viewsets.ModelViewSet):
         """
         Return all `notification for a user`, admin or not
         """
-        notification = Notification.objects.filter(owner=request.user.id)
+        notification = Notification.objects.filter(owner=request.user.id, type="livraison")
+        serialiser = NotificationSeriliser(notification, many=True)
+        return Response(serialiser.data, status=status.HTTP_200_OK)
+    
+    
+        
+    @swagger_auto_schema(
+        method="GET",
+        responses=({
+            200: "OK", 400: "Erreur innatendue", 500: "Erreur innatendu du serveur"
+        }),
+        # operation_summary="Les donnees envoyer dans le corps de la request (purchaseId) est utiliser pour creed des notification qui seront envoyer vers les administrateurs"
+    )
+    @action(methods=["GET"], detail=False, url_path="for/admin")
+    def for_an_admin(self, request):
+        """
+        Return all `notification for a user`, admin or not
+        """
+        # notification = Notification.objects.filter(owner=request.user.id, ~Q(type='livraison'))
+        notification = Notification.objects.filter(owner=request.user.id).exclude(type="livraison")
         serialiser = NotificationSeriliser(notification, many=True)
         return Response(serialiser.data, status=status.HTTP_200_OK)
         
