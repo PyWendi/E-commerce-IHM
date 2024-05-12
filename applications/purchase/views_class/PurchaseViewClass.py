@@ -7,7 +7,10 @@ from ..serialisers import (
 )
 from applications.authentication.serialisers import NotificationSeriliser
 from applications.utilities.channel_method import trigger_channel
+from rest_framework.pagination import PageNumberPagination
 
+class PurchasePagination(PageNumberPagination):
+    page_size = 5
 
 class PurchaseViewSet(viewsets.ModelViewSet):
     """
@@ -56,6 +59,41 @@ class PurchaseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         client = self.request.user
         serializer.save(client=client)
+
+    @swagger_auto_schema(
+        method="GET",
+        responses=({
+            200: "OK, List of purchase", 400: "Erreur innatendue", 500: "Erreur innatendu du serveur"
+        }),
+        # operation_summary="Les donnees envoyer dans le corps de la request (purchaseId) est utiliser pour creed des notification qui seront envoyer vers les administrateurs"
+    )
+    @action(methods=["GET"], detail=False, url_path="for/user")
+    def for_a_user(self, request, page=None, *args, **kwargs):
+        """
+        Retrieves all purchases for the authenticated user, paginated.
+        This endpoint is intended for use in the user profile section.
+
+        @param request: The incoming HTTP request object.
+        @return: A paginated response containing serialized purchase data.
+        """
+        user = get_object_or_404(get_user_model(), pk=request.user.pk)
+        purchase = user.purchase_set.all()
+
+        paginator = PurchasePagination()  # Create a paginator instance
+        paginated_purchase = paginator.paginate_queryset(purchase, request)  # Apply pagination
+
+        serializer = self.serializer_class(paginated_purchase, many=True)
+        response_data = {"results": serializer.data}
+
+        # Include pagination information in the response (optional)
+        if paginated_purchase is not None:
+            response_data['count'] = paginator.page.paginator.count  # Total number of purchases
+            if paginator.page.has_previous():
+                response_data['previous'] = paginator.get_previous_link()
+            if paginator.page.has_next():
+                response_data['next'] = paginator.get_next_link()
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
     @swagger_auto_schema(
