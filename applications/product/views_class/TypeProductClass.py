@@ -45,3 +45,32 @@ class TypeProductViewSet(viewsets.ModelViewSet):
         type = await get_object_or_404(TypeProduct, pk=pk)
         serializer = TypeAndProductSerialiser(type)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    @swagger_auto_schema(responses={200: TypeProductSerializer(many=True),404: "No category is matching the requested value"})
+    @action(methods=["GET"], detail=False, url_path="search/(?P<value>[a-zA-Z]+)")
+    def search_categories(self, request, value, *args, **kwargs):
+        types = TypeProduct.objects.filter(designation__icontains=value)
+        if types is None:
+            return Response({"data": [],}, status=status.HTTP_404_NOT_FOUND)
+        
+        serialiser = self.serializer_class(types, many=True)
+        return Response({"data": serialiser.data}, status=status.HTTP_200_OK)
+    
+    
+    @swagger_auto_schema(responses={200: TypeProductSerializer(many=True),404: "No category is matching the requested value"})
+    @action(methods=["GET"], detail=False, url_path="order/(?P<value>[a-zA-Z]+)")
+    def order_by(self, request, value, *args, **kwagrs):
+        type = TypeProduct.objects.order_by("designation") if (value is "asc") else TypeProduct.objects.order_by("-designation")
+        if type is None:
+            return Response({"data": []}, status=status.HTTP_404_NOT_FOUND)
+        serialiser = self.serializer_class(type, many=True)
+        return Response({
+            "data": serialiser.data
+            }, status=status.HTTP_200_OK)
+        
+        
+        
+    
+    
+    

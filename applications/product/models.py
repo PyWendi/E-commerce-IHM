@@ -18,6 +18,9 @@ def upload_to(instance, filename):
 class TypeProduct(models.Model):
     designation = models.CharField(max_length=50, blank=True, default="")
 
+    class Meta:
+        ordering = ["designation"]
+
     def __str__(self):
         return self.designation
 
