@@ -1,5 +1,4 @@
 from .commonImport import *
-
 from ..models import TypeProduct
 
 from ..serialisers import (
@@ -41,8 +40,8 @@ class TypeProductViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(responses={200: TypeAndProductSerialiser(many=True), 400: "Not updated"})
     @action(methods=["GET"], detail=True)
-    async def all_products(self, request, pk=None):
-        type = await get_object_or_404(TypeProduct, pk=pk)
+    def all_products(self, request, pk=None):
+        type = get_object_or_404(TypeProduct, pk=pk)
         serializer = TypeAndProductSerialiser(type)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -61,16 +60,11 @@ class TypeProductViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(responses={200: TypeProductSerializer(many=True),404: "No category is matching the requested value"})
     @action(methods=["GET"], detail=False, url_path="order/(?P<value>[a-zA-Z]+)")
     def order_by(self, request, value, *args, **kwagrs):
-        type = TypeProduct.objects.order_by("designation") if (value is "asc") else TypeProduct.objects.order_by("-designation")
+        print(value)
+        type = TypeProduct.objects.order_by("designation") if (value == "asc") else TypeProduct.objects.order_by("-designation")
         if type is None:
-            return Response({"data": []}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"results": []}, status=status.HTTP_404_NOT_FOUND)
         serialiser = self.serializer_class(type, many=True)
         return Response({
-            "data": serialiser.data
+            "results": serialiser.data
             }, status=status.HTTP_200_OK)
-        
-        
-        
-    
-    
-    

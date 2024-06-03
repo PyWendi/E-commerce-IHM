@@ -3,7 +3,8 @@ from ..models import Product, Rating, TypeProduct
 from ..serialisers import (
     ProductSerializer,
     ProductImageUpdateSerialiser,
-    RateSerialiser
+    RateSerialiser,
+    TypeAndProductSerialiser
 )
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -123,3 +124,17 @@ class ProductViewSet(viewsets.ModelViewSet):
                 "Message": "Une erreur s'est produite, veuiller reesayer plutard.",
                 "Error": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    @swagger_auto_schema(methods=["GET"], responses={200: TypeAndProductSerialiser(many=True), 400: "Problem while fecthing the data"})
+    @action(
+        methods=["GET"],
+        detail=True,
+        serializer_class=TypeAndProductSerialiser,
+    )
+    def by_category(self, request, pk=None):
+        type = TypeProduct.objects.order_by("designation")[:1] if not pk.isalpha() else get_object_or_404(TypeProduct, pk=pk)
+        print(type)
+        serialiser = TypeAndProductSerialiser(type, many=True)
+        return Response(serialiser.data, status=status.HTTP_200_OK)
+
